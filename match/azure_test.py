@@ -22,7 +22,7 @@ db = client.test
 
 mycol = db["missing"]
 os.environ['FACE_SUBSCRIPTION_KEY'] = "a79298493a4443ed9972de106b4035c3"
-os.environ['FACE_ENDPOINT'] = "https://findtheface.cognitiveservices.azure.com/"
+os.environ['FACE_ENDPOINT'] = "https://childmissing.cognitiveservices.azure.com/"
 PERSON_GROUP_ID = 'my-unique-person-group6'
 KEY = os.environ['FACE_SUBSCRIPTION_KEY']
 ENDPOINT = os.environ['FACE_ENDPOINT']

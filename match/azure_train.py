@@ -17,7 +17,7 @@ from azure.cognitiveservices.vision.face.models import TrainingStatusType, Perso
 from flask import Flask, redirect, url_for, request
 app = Flask(__name__)
 os.environ['FACE_SUBSCRIPTION_KEY'] = "a79298493a4443ed9972de106b4035c3"
-os.environ['FACE_ENDPOINT'] = "https://findtheface.cognitiveservices.azure.com/"
+os.environ['FACE_ENDPOINT'] = "https://childmissing.cognitiveservices.azure.com/"
 client = MongoClient('mongodb://localhost:27017')
 db = client.test
 
