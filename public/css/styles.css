@@ -1,0 +1,139 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+.wrapper {
+  min-height: 100%;
+  margin-bottom: -50px;
+
+ }
+
+ .nav-wrapper{
+  background-color:rgba(80, 4, 17, 0.801);
+ }
+
+.footer,.push {
+  height: 50px; 
+}
+
+.page-footer{
+  background-color:rgba(80, 4, 17, 0.801);
+}
+
+.brand-logo{
+  font-family: 'Zhi Mang Xing', cursive;
+  /* font-size:40px; */
+}
+
+
+/* Laptops and Desktops */
+@media only screen and (min-width: 992px) {
+    .find-and-report-form {
+    margin: 300px auto;
+    padding: 0 20%;
+    }
+    /* css for 1st image in index page */
+     .front-image{
+       height:auto;
+       width: 100%;
+    } 
+    .app-description-content-img{
+      width: 20%;
+      /* margin: 50px auto; */
+      float: left;
+      margin:0 50px;
+    }
+    .app-description-content-text{
+      padding:20px 0;
+      /* display: inline-block; */
+    }
+    .app-description-content{
+      width: 60%;
+      margin:50px auto;
+      height:200px;
+      box-sizing: border-box;
+    }
+    .after-report-container{
+      text-align: center;
+      margin: 100px auto;
+    }
+    .after-find-container{
+      width: 40%;
+      max-width: 400px;
+      margin: 100px auto;
+    }
+   
+}
+
+
+/* Tablets */
+@media only screen and (min-width: 600px) and (max-width: 991px){
+    .find-and-report-form {
+    margin: 300px auto;
+    padding: 0 10%;
+    }
+    /* css for 1st image in index page */
+    .front-image{
+      height:auto;
+      width:100%
+     }  
+     .app-description-content-img{
+      width: 40%;
+      float: left;
+      margin:0 50px;
+    }
+    .app-description-content-text{
+      padding:20px 0;
+      /* display: inline-block; */
+    }
+    .app-description-content{
+      width: 60%;
+      margin:50px auto;
+      height:200px;
+      box-sizing: border-box;
+    }
+    .after-report-container{
+      text-align: center;
+      margin: 100px auto;
+    }
+    .after-find-container{
+      width: 60%;
+      /* max-width: 400px; */
+      margin: 100px auto;
+    }
+}
+
+/* Phones */
+@media only screen and (max-width: 600px) {
+    .find-and-report-form {
+    margin: 300px auto;
+    padding: 0 5%;
+    }
+
+    /* css for 1st image in index page */
+     .front-image{ 
+       width: 100%;
+      }  
+
+    .app-description-content-img{
+      width: 40%;
+      display: block;
+      margin: 50px auto;
+      /* text-align: center; */
+    }
+    .app-description-content-text{
+      padding:0 10px;
+      /* font-size: */
+    }
+    .after-report-container{
+      text-align: center;
+      margin: 100px auto;
+    }
+    .after-find-container{
+      width: 95%;
+      margin: 100px auto;
+    }
+}
+/* font-family: 'Zhi Mang Xing', cursive;
+font-family: 'Caveat', cursive;
+font-family: 'Kaushan Script', cursive; */

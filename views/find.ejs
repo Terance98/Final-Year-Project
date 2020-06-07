@@ -1,0 +1,19 @@
+<%- include('partials/header') -%>
+<form class = "find-and-report-form" action="/find" method="POST" enctype="multipart/form-data">
+    <div class="file-field input-field find-child-form">
+        <div class="input-container">
+            <div class="btn">
+                <span>File</span>
+                <input type="file" name="upfile" multiple>
+            </div>
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" placeholder="Upload one or more files">
+            </div>
+        </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+        </button>
+    </div>
+</form>
+<%- include('partials/footer') -%>

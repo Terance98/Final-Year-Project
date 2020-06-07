@@ -1,0 +1,20 @@
+<%- include('partials/header') -%>
+
+<% output.forEach(element => { %>
+<div class="card after-find-container">
+    <div class="card-image">
+        <img class = "after-find-img" src=<%=element.fname%>1.jpg>
+        <!-- <span class="card-title" style="color: black;"><%=element.name%></span> -->
+    </div>
+    <div class="card-content">
+        <p>Matched with <%=element.name%> at a confidence level of <%=(element.confidence_level)*100%>%</p>
+    </div>
+    <div class="card-action">
+        <a href="#">Get Details -></a>
+    </div>
+</div>
+<%  });   %>
+
+
+
+<%- include('partials/footer') -%>
