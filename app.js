@@ -41,6 +41,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //Mongoose Schemas
 // const Child = mongoose.model('Child', { name: String, image_ID: String });
 
+//Mongoose model for children
+var UserSchema = new mongoose.Schema({
+    username: String,
+    email: String,
+    password: String,
+}, { timestamps: true });
+
+const User = mongoose.model('User', UserSchema);
 
 app.get('/', function (req, res) {
     res.render('index');
@@ -156,14 +164,36 @@ app.get('/signup', (req, res) => {
     res.render('signUp');
 });
 
-app.post('/signup', (req, res) => {
-    const firstName = req.body.first_name;
-    const lastName = req.body.last_name;
-    const email = req.body.email;
-    const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
-    console.log(email, password, confirmPassword);
-    res.redirect('/');
+app.post('/signup', async (req, res) => {
+    try {
+        const firstName = req.body.first_name;
+        const lastName = req.body.last_name;
+        const email = req.body.email;
+        const password = req.body.password;
+        const confirmPassword = req.body.confirmPassword;
+
+        [firstName, lastName, email, password, confirmPassword].forEach(item => { if (!item) return res.redirect("/signup") })
+
+        if (confirmPassword !== password) return res.redirect("/signup");
+
+        const userData = {
+            username: firstName + ' ' + lastName,
+            email: email,
+            password: password
+        }
+
+        const ifUserExists = await User.findOne({ email: email });
+        console.log(ifUserExists);
+        if (ifUserExists) return res.redirect("/signup");
+
+        const user = new User(userData);
+        const response = await user.save();
+        console.log(response);
+        res.redirect('/');
+    } catch (err) {
+        console.log(err);
+        res.redirect('/signup');
+    }
 });
 
 app.listen(4000, () => console.log(`Example app listening on port 4000!`));
