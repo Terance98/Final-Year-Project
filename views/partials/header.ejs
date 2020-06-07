@@ -24,13 +24,12 @@
                     <li><a href="/report">Report a missing case</a></li>
                     <li><a href="/find">Find a child</a></li>
                     <li><a href="/signout">Sign out</a></li>`
-                    
+
     window.onload = () => {
         const navBarUl = document.getElementById('nav-ul');
         const sideNavUl = document.getElementById('mobile-demo');
         try {
             if (sideNavUl && navBarUl) {
-                console.log(document.cookie)
                 if (document.cookie) {
                     const userID = decodeURIComponent(document.cookie.split('=')[1]).split(':')[1];
                     if (userID) {
@@ -40,8 +39,9 @@
                 } else throw "Cookies not set"
             } else throw "Nav items were not found"
         } catch (err) {
-            navBarUl = defaultContent;
-            sideNavUl = defaultContent;
+            console.log(err);
+            navBarUl.innerHTML = defaultContent;
+            sideNavUl.innerHTML = defaultContent;
         }
     }
 </script>
