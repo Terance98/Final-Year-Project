@@ -16,7 +16,7 @@ from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person, SnapshotObjectType, OperationStatusType
 from flask import Flask, redirect, url_for, request
 app = Flask(__name__)
-os.environ['FACE_SUBSCRIPTION_KEY'] = "54816f6b4f19459e89deb5fcc9081387"
+os.environ['FACE_SUBSCRIPTION_KEY'] = "a79298493a4443ed9972de106b4035c3"
 os.environ['FACE_ENDPOINT'] = "https://findtheface.cognitiveservices.azure.com/"
 client = MongoClient('mongodb://localhost:27017')
 db = client.test
