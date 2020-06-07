@@ -153,11 +153,22 @@ app.get('/signin', (req, res) => {
     res.render('signIn');
 });
 
-app.post('/signin', (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    console.log(email, password);
-    res.redirect('/');
+app.post('/signin', async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const ifUserExists = await User.findOne({ email: email, password: password });
+        if (ifUserExists) {
+            return res.redirect("/");
+        } else {
+            return res.redirect("/signin");
+        }
+    } catch (err) {
+        console.log(err);
+        res.redirect("/signin");
+    }
+
 });
 
 app.get('/signup', (req, res) => {
