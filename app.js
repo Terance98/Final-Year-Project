@@ -44,6 +44,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // const Child = mongoose.model('Child', { name: String, image_ID: String });
 
 //Mongoose model for children
+const Schema = mongoose.Schema;
+
 var UserSchema = new mongoose.Schema({
     username: String,
     email: String,
@@ -52,9 +54,17 @@ var UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 
+const ChildSchema = new mongoose.Schema({
+    name: String,
+    image_ID: String,
+    parent: { type: Schema.Types.ObjectId, ref: 'User' }
+}, { timestamps: true });
+
+const Child = mongoose.model('Child', ChildSchema);
+
 app.get('/', function (req, res) {
     const userID = req.cookies.userID;
-    if(!userID) return res.redirect("/signin");
+    if (!userID) return res.redirect("/signin");
     res.render('index');
 });
 
@@ -78,9 +88,15 @@ app.post("/report", function (req, res) {
 
     try {
         const childName = req.body.childName;
-        if (req.files.upfile) {
-            let file = req.files.upfile;
-            file.forEach((item, index) => {
+        const files = [];
+        if (Array.isArray(req.files.upfile)) {
+            files.push(...req.files.upfile);
+        } else {
+            files.push(req.files.upfile);
+        }
+        if (files.length) {
+            files.forEach((item, index) => {
+                //use uuid instead of childName
                 let fileName = _.split(childName, ' ')[0] + (index + 1) + ".jpg";
                 let uploadpath = __dirname + '/match/' + fileName;
 
@@ -90,12 +106,13 @@ app.post("/report", function (req, res) {
                     }
                     else {
                         console.log("File Uploaded", fileName);
-                        // const childData = new Child({ name: childName, image_ID: fileName });
-                        // childData.save().then(() => console.log("Child's data is written!"));
+                        const childData = new Child({ name: childName, image_ID: fileName, parent: userID });
+                        childData.save().then(() => console.log("Child's data is written!"));
                         // console.log(childData);
                     }
                 })
             });
+            // }
             const params = new URLSearchParams();
             params.append('name', childName);
 
