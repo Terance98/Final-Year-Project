@@ -14,18 +14,46 @@
     <title>Child Missing Case Reporter</title>
 </head>
 
+<script>
+    const defaultContent = `<li><a href="/">Home</a></li>
+                    <li><a href="/report">Report a missing case</a></li>
+                    <li><a href="/find">Find a child</a></li>
+                    <li><a href="/signin">Sign in</a></li>
+                    <li><a href="/signup">Sign up</a></li>`
+    const loggedInContent = `<li><a href="/">Home</a></li>
+                    <li><a href="/report">Report a missing case</a></li>
+                    <li><a href="/find">Find a child</a></li>
+                    <li><a href="/signout">Sign out</a></li>`
+                    
+    window.onload = () => {
+        const navBarUl = document.getElementById('nav-ul');
+        const sideNavUl = document.getElementById('mobile-demo');
+        try {
+            if (sideNavUl && navBarUl) {
+                console.log(document.cookie)
+                if (document.cookie) {
+                    const userID = decodeURIComponent(document.cookie.split('=')[1]).split(':')[1];
+                    if (userID) {
+                        navBarUl.innerHTML = loggedInContent;
+                        sideNavUl.innerHTML = loggedInContent;
+                    } else throw "UserID is not set"
+                } else throw "Cookies not set"
+            } else throw "Nav items were not found"
+        } catch (err) {
+            navBarUl = defaultContent;
+            sideNavUl = defaultContent;
+        }
+    }
+</script>
+
 <body>
     <div class="wrapper">
         <nav>
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo">Bambino</a>
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/report">Report a missing case</a></li>
-                    <li><a href="/find">Find a child</a></li>
-                    <li><a href="/signin">Sign in</a></li>
-                    <li><a href="/signup">Sign up</a></li>
+                <ul class="right hide-on-med-and-down" id="nav-ul">
+                    
                 </ul>
             </div>
         </nav>

@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const ejs = require('ejs');
 const _ = require('lodash')
 const fetch = require('node-fetch');
+var cookieParser = require('cookie-parser');
 // const Bluebird = require('bluebird');
 
 // fetch.Promise = Bluebird;
@@ -35,6 +36,7 @@ mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
 //         )
 //     });
 // }
+app.use(cookieParser());
 app.use(upload()); // configure middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -51,116 +53,156 @@ var UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 app.get('/', function (req, res) {
+    const userID = req.cookies.userID;
+    if(!userID) return res.redirect("/signin");
     res.render('index');
 });
 
 app.post('/upload', function (req, res) {
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
     console.log(req.files);
 })
 
 app.get("/report", function (req, res) {
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
+
     res.render('report');
 });
 
 
 app.post("/report", function (req, res) {
-    let childName = req.body.childName;
-    if (req.files.upfile) {
-        let file = req.files.upfile;
-        file.forEach((item, index) => {
-            let fileName = _.split(childName, ' ')[0] + (index + 1) + ".jpg";
-            let uploadpath = __dirname + '/match/' + fileName;
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
 
-            item.mv(uploadpath, function (err) {
-                if (err) {
-                    console.log("File Upload Failed", fileName, err);
-                }
-                else {
-                    console.log("File Uploaded", fileName);
-                    // const childData = new Child({ name: childName, image_ID: fileName });
-                    // childData.save().then(() => console.log("Child's data is written!"));
-                    // console.log(childData);
-                }
-            })
-        });
-        const params = new URLSearchParams();
-        params.append('name', childName);
+    try {
+        const childName = req.body.childName;
+        if (req.files.upfile) {
+            let file = req.files.upfile;
+            file.forEach((item, index) => {
+                let fileName = _.split(childName, ' ')[0] + (index + 1) + ".jpg";
+                let uploadpath = __dirname + '/match/' + fileName;
 
-        const fetchUrl = "http://127.0.0.1:5000/";
-        fetch(fetchUrl, { method: 'POST', body: params })
-            .then(res => res.json())
-            .then(result => {
-                console.log(result);
-                if (result['status']) {
-                    res.render("after_report")
-                }
-                res.send("<h1>Training unsuccessful</h1>");
+                item.mv(uploadpath, function (err) {
+                    if (err) {
+                        console.log("File Upload Failed", fileName, err);
+                    }
+                    else {
+                        console.log("File Uploaded", fileName);
+                        // const childData = new Child({ name: childName, image_ID: fileName });
+                        // childData.save().then(() => console.log("Child's data is written!"));
+                        // console.log(childData);
+                    }
+                })
             });
-    } else {
-        res.send("No File selected !");
-        res.end();
-    };
+            const params = new URLSearchParams();
+            params.append('name', childName);
+
+            const fetchUrl = "http://127.0.0.1:5000/";
+            fetch(fetchUrl, { method: 'POST', body: params })
+                .then(res => res.json())
+                .then(result => {
+                    console.log(result);
+                    if (result['status']) {
+                        res.render("after_report")
+                    }
+                    res.send("<h1>Training unsuccessful</h1>");
+                });
+        } else {
+            res.send("No File selected !");
+            res.end();
+        };
+    } catch (err) {
+        console.log(err);
+        res.redirect("/report");
+    }
 });
 
 app.get("/find", function (req, res) {
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
+
     res.render('find');
 });
 
 app.post("/find", function (req, res) {
-    if (req.files.upfile) {
-        const name = "suspicious.jpg";
-        let uploadpath = __dirname + '/match/suspicious.jpg';
-        const file = req.files.upfile;
-        file.mv(uploadpath, function (err) {
-            if (err) {
-                console.log("File Upload Failed", name, err);
-            } else {
-                console.log("File Uploaded", name);
-            }
-        });
-        const params = new URLSearchParams();
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
 
-        const fetchUrl = "http://127.0.0.1:6000/";
-        fetch(fetchUrl, { method: 'POST', body: params })
-            .then(res => res.json())
-            .then(results => {
-                console.log(results);
-                if (results.output) {
-                    res.render("after_find", results);
+    try {
+
+        if (req.files.upfile) {
+            const name = "suspicious.jpg";
+            let uploadpath = __dirname + '/match/suspicious.jpg';
+            const file = req.files.upfile;
+            file.mv(uploadpath, function (err) {
+                if (err) {
+                    console.log("File Upload Failed", name, err);
                 } else {
-                    throw Error;
+                    console.log("File Uploaded", name);
                 }
-            }).catch(err => {
-                res.render("cannot_find_error");
-            })
+            });
+            const params = new URLSearchParams();
 
-    } else {
-        res.send("No File selected !");
-        res.end();
-    };
+            const fetchUrl = "http://127.0.0.1:6000/";
+            fetch(fetchUrl, { method: 'POST', body: params })
+                .then(res => res.json())
+                .then(results => {
+                    console.log(results);
+                    if (results.output) {
+                        res.render("after_find", results);
+                    } else {
+                        throw Error;
+                    }
+                }).catch(err => {
+                    res.render("cannot_find_error");
+                })
+
+        } else {
+            res.send("No File selected !");
+            res.end();
+        };
+    } catch (err) {
+        console.log(err);
+        res.redirect("/find");
+    }
 });
 
 
 app.get("/afterfind", (req, res) => {
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
+
     res.render("after_find");
 });
 
 app.get("/afterreport", (req, res) => {
+    const userID = req.cookies.userID;
+    if (!userID) return res.redirect("/signin");
+
     res.render("after_report");
 });
 
 app.get('/signin', (req, res) => {
+    const userID = req.cookies.userID;
+    if (userID) return res.redirect("/");
+
     res.render('signIn');
 });
 
 app.post('/signin', async (req, res) => {
+    const userID = req.cookies.userID;
+    if (userID) return res.redirect("/");
+
     try {
         const email = req.body.email;
         const password = req.body.password;
 
         const ifUserExists = await User.findOne({ email: email, password: password });
         if (ifUserExists) {
-            return res.redirect("/");
+            //Setting the cookie value
+            res.cookie('userID', ifUserExists._id, { maxAge: 360000 }).redirect('/')
         } else {
             return res.redirect("/signin");
         }
@@ -172,10 +214,16 @@ app.post('/signin', async (req, res) => {
 });
 
 app.get('/signup', (req, res) => {
+    const userID = req.cookies.userID;
+    if (userID) return res.redirect("/");
+
     res.render('signUp');
 });
 
 app.post('/signup', async (req, res) => {
+    const userID = req.cookies.userID;
+    if (userID) return res.redirect("/");
+
     try {
         const firstName = req.body.first_name;
         const lastName = req.body.last_name;
@@ -206,5 +254,7 @@ app.post('/signup', async (req, res) => {
         res.redirect('/signup');
     }
 });
+
+app.get("/signout", (req, res) => res.clearCookie('userID').redirect("/"))
 
 app.listen(4000, () => console.log(`Example app listening on port 4000!`));
