@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const upload = require('express-fileupload');
 const path = require('path');
@@ -8,10 +9,9 @@ const ejs = require('ejs');
 const _ = require('lodash')
 const fetch = require('node-fetch');
 var cookieParser = require('cookie-parser');
-const accountSid = 'AC5fad11cf2c219106876868e2e840c84d';
-const authToken = '9279e69d22870f6764c323d874028cc3';
+const accountSid = process.env.TWILIO_ACCOUNT;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const TwilioClient = require('twilio')(accountSid, authToken);
-
 var nodemailer = require('nodemailer');
 var sgTransport = require('nodemailer-sendgrid-transport');
 
@@ -19,7 +19,7 @@ var options = {
     // service: 'SendGrid',
     auth: {
         // api_user: 'apikey',
-        api_key: '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'
+        api_key: process.env.SENDGRID_KEY
     }
 }
 
@@ -198,9 +198,9 @@ app.post("/find", function (req, res) {
                 .then(results => {
                     console.log(results);
                     if (results.output.length) {
-                        
+
                         const guardianEmail = "thomasterance2020@cs.ajce.in";
-                        const guardianPhone = "+919495269639";
+                        const guardianPhone = "+919496342920";
 
                         const email = {
                             from: 'thomasterance98@gmail.com',
