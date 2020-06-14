@@ -1,12 +1,13 @@
 <%- include('partials/header') -%>
-<form class = "find-and-report-form" action="/report" method="POST" enctype="multipart/form-data">
-    <!-- <div class="row"> -->
+<form class="find-and-report-form" action="/report" method="POST" enctype="multipart/form-data"
+    style="margin-top:25px; width: auto;">
+
     <div class="input-field">
         <input id="first_name2" type="text" class="validate" name="childName">
         <label class="active" for="first_name2">Name</label>
     </div>
 
-     <div class="input-field">
+    <div class="input-field">
         <input id="first_name2" type="text" class="validate" name="age">
         <label class="active" for="first_name2">Age</label>
     </div>
@@ -21,45 +22,38 @@
         <label class="active" for="first_name2">Complexion</label>
     </div>
 
-     <div class="input-field">
+    <div class="input-field">
         <input id="first_name2" type="text" class="validate" name="height">
         <label class="active" for="first_name2">Height</label>
     </div>
 
-     <div class="input-field">
+    <div class="input-field">
         <input id="first_name2" type="text" class="validate" name="spot">
         <label class="active" for="first_name2">Spot of missing</label>
     </div>
 
-    
-     <div class="input-field">
+
+    <div class="input-field">
         <input id="first_name2" type="text" class="validate" name="guardiansname">
         <label class="active" for="first_name2">Guardian's Name</label>
     </div>
 
 
-     <div class="input-field">
-          <i class="material-icons prefix">phone</i>
-          <input id="icon_telephone" type="tel" class="validate">
-          <label for="icon_telephone">Telephone</label>
+    <div class="input-field">
+        <i class="material-icons prefix">phone</i>
+        <input id="icon_telephone" type="tel" class="validate">
+        <label for="icon_telephone">Telephone</label>
     </div>
 
     <div class="input-field">
-                <input name="email" id="email" type="email" class="validate">
-                <label for="email">Email</label>
+        <input name="email" id="email" type="email" class="validate">
+        <label for="email">Email</label>
     </div>
 
-      <div class="input-field">
+    <div class="input-field">
         <input id="first_name2" type="text" class="validate" name="address">
         <label class="active" for="first_name2">Address</label>
     </div>
-
-
-     <div class="input-field">
-        <input id="first_name2" type="text" class="validate" name="childName">
-        <label class="active" for="first_name2">Name</label>
-    </div>
-    <!-- </div> -->
     <div class="file-field input-field">
         <div class="input-container">
             <div class="btn">
@@ -75,5 +69,6 @@
             <i class="material-icons right">send</i>
         </button>
     </div>
+
 </form>
 <%- include('partials/footer') -%>

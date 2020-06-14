@@ -30,7 +30,17 @@ PERSON_GROUP_ID = 'my-unique-person-group6'
 TARGET_PERSON_GROUP_ID = str(uuid.uuid4())
 
 
-def train(personName):
+def train(body):
+    personName = body['childName']
+    age = body['age']
+    gender = body['gender']
+    complexion = body['complexion']
+    height = body['height']
+    missingSpot = body['spot']
+    guardiansName = body['guardiansname']
+    email = body['email']
+    address = body['address']
+
     print('Person group:', PERSON_GROUP_ID)
     try:
         face_client.person_group.create(
@@ -51,7 +61,7 @@ def train(personName):
 
     print('Training the person group...')
     face_client.person_group.train(PERSON_GROUP_ID)
-    mydict = {"name": personName, "azure_face_id": person.person_id, "photos" : person_images}
+    mydict = {"name": personName, "age" : age, "gender" : gender, "complexion": complexion, "height": height, "missing_spot": missingSpot, "guardian_name": guardiansName, "email": email, "address": address , "azure_face_id": person.person_id, "photos" : person_images}
     x = mycol.insert_one(mydict)
     print(x.inserted_id)
     while (True):
@@ -69,12 +79,11 @@ def train(personName):
 @app.route('/', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        personName = request.form['name']
-        train(personName)
+        print(request.form)
+        train(request.form)
         return {'status': True}
     else:
-        personName = request.args.get('name')
-        train(personName)
+        train(request.form)
         return {'status': True}
 
 

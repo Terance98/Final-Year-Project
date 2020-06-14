@@ -84,6 +84,7 @@ app.get("/report", function (req, res) {
 
 
 app.post("/report", function (req, res) {
+    console.log(req.body);
     const userID = req.cookies.userID;
     if (!userID) return res.redirect("/signin");
 
@@ -107,15 +108,19 @@ app.post("/report", function (req, res) {
                     }
                     else {
                         console.log("File Uploaded", fileName);
+                        //Instead of writing to db here, pass it on to the python API and handle data insertion from there.
                         const childData = new Child({ name: childName, image_ID: fileName, parent: userID });
-                        childData.save().then(() => console.log("Child's data is written!"));
                         // console.log(childData);
+                        childData.save().then(() => console.log("Child's data is written!"));
                     }
                 })
             });
             // }
             const params = new URLSearchParams();
-            params.append('name', childName);
+            for (let key of Object.keys(req.body)) {
+                params.append(key, req.body[key]);
+            }
+            // params.append('name', childName);
 
             const fetchUrl = "http://127.0.0.1:5000/";
             fetch(fetchUrl, { method: 'POST', body: params })
@@ -123,17 +128,21 @@ app.post("/report", function (req, res) {
                 .then(result => {
                     console.log(result);
                     if (result['status']) {
-                        res.render("after_report")
+                        return res.render("after_report")
                     }
-                    res.send("<h1>Training unsuccessful</h1>");
-                });
+                    return res.send("<h1>Training unsuccessful</h1>");
+                })
+                .catch(err => {
+                    console.log("API error - ", err);
+                    return res.redirect("/report");
+                })
         } else {
             res.send("No File selected !");
             res.end();
         };
     } catch (err) {
         console.log(err);
-        res.redirect("/report");
+        return res.redirect("/report");
     }
 });
 
