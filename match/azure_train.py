@@ -40,6 +40,7 @@ def train(body):
     guardiansName = body['guardiansname']
     email = body['email']
     address = body['address']
+    phone = body['phone']
 
     print('Person group:', PERSON_GROUP_ID)
     try:
@@ -61,7 +62,7 @@ def train(body):
 
     print('Training the person group...')
     face_client.person_group.train(PERSON_GROUP_ID)
-    mydict = {"name": personName, "age" : age, "gender" : gender, "complexion": complexion, "height": height, "missing_spot": missingSpot, "guardian_name": guardiansName, "email": email, "address": address , "azure_face_id": person.person_id, "photos" : person_images}
+    mydict = {"name": personName, "phone": phone ,"age" : age, "gender" : gender, "complexion": complexion, "height": height, "missing_spot": missingSpot, "guardian_name": guardiansName, "email": email, "address": address , "azure_face_id": person.person_id, "photos" : person_images}
     x = mycol.insert_one(mydict)
     print(x.inserted_id)
     while (True):

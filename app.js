@@ -66,6 +66,7 @@ const Schema = mongoose.Schema;
 var UserSchema = new mongoose.Schema({
     username: String,
     email: String,
+    phone: String,
     password: String,
 }, { timestamps: true });
 
@@ -82,6 +83,18 @@ const User = mongoose.model('User', UserSchema);
 const Missing = mongoose.model('Missing',
     new Schema({}),
     'missing');
+
+function tConvert(time) {
+    // Check correct time format and split into components
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+    if (time.length > 1) { // If time format correct
+        time = time.slice(1);  // Remove full string match value
+        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+        time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join(''); // return adjusted time or original string
+}
 
 app.get('/', function (req, res) {
     const userID = req.cookies.userID;
@@ -176,9 +189,8 @@ app.get("/find", function (req, res) {
 app.post("/find", function (req, res) {
     const userID = req.cookies.userID;
     if (!userID) return res.redirect("/signin");
-
+    if (!req.body.lat || !req.body.long) return res.redirect("/find");
     try {
-
         if (req.files.upfile) {
             const name = "suspicious.jpg";
             let uploadpath = __dirname + '/match/suspicious.jpg';
@@ -195,20 +207,40 @@ app.post("/find", function (req, res) {
             const fetchUrl = "http://127.0.0.1:6000/";
             fetch(fetchUrl, { method: 'POST', body: params })
                 .then(res => res.json())
-                .then(results => {
-                    console.log(results);
+                .then(async results => {
                     if (results.output.length) {
+                        const childPersonId = results.output[0].person_id;
 
-                        const guardianEmail = "thomasterance2020@cs.ajce.in";
-                        const guardianPhone = "+919496342920";
+                        const childData = await Missing.findOne({ azure_face_id: childPersonId });
+                        const reportedUser = await User.findOne({ _id: userID });
+                        // const childName = childData.name;
+                        const { name: childName, email: guardianEmail, phone: guardianPhone } = JSON.parse(JSON.stringify(childData));
+                        const { username: reportedUserName, email: reportedUserEmail, phone: reportedUserPhone } = reportedUser;
+                        const childSpottedLocationUrl = `http://maps.google.com/?q=${req.body.lat},${req.body.long}`;
+                        console.log(guardianPhone);
+                        // For todays date;
+                        Date.prototype.today = function () {
+                            return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
+                        }
 
+                        // For the time now
+                        Date.prototype.timeNow = function () {
+                            return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
+                        }
+
+                        const dateTime = new Date().today() + ' at ' + tConvert(new Date().timeNow());
+                        // const guardianEmail = "thomasterance2020@cs.ajce.in";
+                        // const guardianPhone = "+919496342920";
+                        const foundChildText = `Your child ${childName} was found on ${dateTime}. Here are the details of the person who found your child,\n\nName - ${reportedUserName}\nEmail - ${reportedUserEmail}\nPhone - ${reportedUserPhone}\n\nClick the link to get the spotted location : ${childSpottedLocationUrl}`;
+                        // console.log(foundChildText);
                         const email = {
                             from: 'thomasterance98@gmail.com',
                             to: guardianEmail,
                             subject: 'Your child was found',
-                            text: 'Your child <name> was found at <destination> on date and time.',
+                            text: foundChildText
                         };
 
+                        //Send an email
                         EmailClient.sendMail(email, function (err, info) {
                             if (err) {
                                 console.log(err);
@@ -217,26 +249,26 @@ app.post("/find", function (req, res) {
                                 console.log('Email sent!');
                             }
                         });
-                        //Send sms here
-                        // Download the helper library from https://www.twilio.com/docs/node/install
-                        // Your Account Sid and Auth Token from twilio.com/console
-                        // DANGER! This is insecure. See http://twil.io/secure
 
+                        //Send an sms
                         TwilioClient.messages
                             .create({
-                                body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+                                body: foundChildText,
                                 from: '+16123954705',
                                 to: guardianPhone
                             })
-                            .then(message => console.log('Message sent ', message.sid))
+                            .then(message => console.log('Message sent!'))
                             .catch(err => console.log(err));
 
                         res.render("after_find", results);
 
+                        //Also send mail and sms to the user who found the child
                     } else {
+                        console.log('No match found!');
                         throw Error;
                     }
                 }).catch(err => {
+                    console.log(err);
                     res.render("cannot_find_error");
                 })
 
@@ -283,7 +315,7 @@ app.post('/signin', async (req, res) => {
         const ifUserExists = await User.findOne({ email: email, password: password });
         if (ifUserExists) {
             //Setting the cookie value
-            res.cookie('userID', ifUserExists._id, { maxAge: 360000 }).redirect('/')
+            res.cookie('userID', ifUserExists._id, { maxAge: 3600000 }).redirect('/')
         } else {
             return res.redirect("/signin");
         }
@@ -309,16 +341,18 @@ app.post('/signup', async (req, res) => {
         const firstName = req.body.first_name;
         const lastName = req.body.last_name;
         const email = req.body.email;
+        const phone = req.body.phone;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
 
-        [firstName, lastName, email, password, confirmPassword].forEach(item => { if (!item) return res.redirect("/signup") })
+        [firstName, lastName, email, password, phone, confirmPassword].forEach(item => { if (!item) return res.redirect("/signup") })
 
         if (confirmPassword !== password) return res.redirect("/signup");
 
         const userData = {
             username: firstName + ' ' + lastName,
             email: email,
+            phone: phone,
             password: password
         }
 
@@ -345,12 +379,19 @@ app.get('/get-details/:personId', async (req, res) => {
         const childDetails = await Missing.findOne({ azure_face_id: personId });
         console.log(childDetails);
 
+
     } catch (err) {
         console.log(err);
         res.redirect("/");
     }
 });
 
-app.get('/details', (req, res) => res.render('details'))
+app.get('/test', (req, res) => {
+    res.sendFile('test2.html', {
+        root: path.join(__dirname, '/views')
+    })
+});
+
+app.get('/details', (req, res) => res.render('details'));
 
 app.listen(4000, () => console.log(`Example app listening on port 4000!`));
