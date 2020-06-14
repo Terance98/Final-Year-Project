@@ -71,13 +71,13 @@ var UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 
-const ChildSchema = new mongoose.Schema({
-    name: String,
-    image_ID: String,
-    parent: { type: Schema.Types.ObjectId, ref: 'User' }
-}, { timestamps: true });
+// const ChildSchema = new mongoose.Schema({
+//     name: String,
+//     image_ID: String,
+//     parent: { type: Schema.Types.ObjectId, ref: 'User' }
+// }, { timestamps: true });
 
-const Child = mongoose.model('Child', ChildSchema);
+// const Child = mongoose.model('Child', ChildSchema);
 
 const Missing = mongoose.model('Missing',
     new Schema({}),
@@ -129,9 +129,9 @@ app.post("/report", function (req, res) {
                     else {
                         console.log("File Uploaded", fileName);
                         //Instead of writing to db here, pass it on to the python API and handle data insertion from there.
-                        const childData = new Child({ name: childName, image_ID: fileName, parent: userID });
+                        // const childData = new Child({ name: childName, image_ID: fileName, parent: userID });
                         // console.log(childData);
-                        childData.save().then(() => console.log("Child's data is written!"));
+                        // childData.save().then(() => console.log("Child's data is written!"));
                     }
                 })
             });
@@ -228,7 +228,7 @@ app.post("/find", function (req, res) {
                                 from: '+16123954705',
                                 to: guardianPhone
                             })
-                            .then(message => console.log('Message sent ',message.sid))
+                            .then(message => console.log('Message sent ', message.sid))
                             .catch(err => console.log(err));
 
                         res.render("after_find", results);
@@ -351,6 +351,6 @@ app.get('/get-details/:personId', async (req, res) => {
     }
 });
 
-app.get('/details', (req,res) => res.render('details'))
+app.get('/details', (req, res) => res.render('details'))
 
 app.listen(4000, () => console.log(`Example app listening on port 4000!`));

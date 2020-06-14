@@ -73,10 +73,12 @@ def identify():
 @app.route('/', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        return identify()
+        try:
+            return identify()
+        except:
+            return {'output': []}
     else:
         return identify()
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=6000)

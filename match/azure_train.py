@@ -79,9 +79,11 @@ def train(body):
 @app.route('/', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        print(request.form)
-        train(request.form)
-        return {'status': True}
+        try:
+            train(request.form)
+            return {'status': True}
+        except:
+            return {'status': False}
     else:
         train(request.form)
         return {'status': True}
