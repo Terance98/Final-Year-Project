@@ -63,6 +63,10 @@ const ChildSchema = new mongoose.Schema({
 
 const Child = mongoose.model('Child', ChildSchema);
 
+const Missing = mongoose.model('Missing',
+    new Schema({ }),
+    'missing');  
+
 app.get('/', function (req, res) {
     const userID = req.cookies.userID;
     if (!userID) return res.redirect("/signin");
@@ -282,6 +286,19 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-app.get("/signout", (req, res) => res.clearCookie('userID').redirect("/"))
+app.get("/signout",  (req, res) => res.clearCookie('userID').redirect("/"))
+
+app.get('/get-details/:personId', async (req,res) => {
+    const personId = req.params.personId;
+    console.log(personId);
+    try{
+        const childDetails = await Missing.findOne({ azure_face_id: personId});
+        console.log(childDetails);
+
+    } catch(err){
+        console.log(err);
+        res.redirect("/");
+    }
+});
 
 app.listen(4000, () => console.log(`Example app listening on port 4000!`));
