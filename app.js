@@ -8,6 +8,22 @@ const ejs = require('ejs');
 const _ = require('lodash')
 const fetch = require('node-fetch');
 var cookieParser = require('cookie-parser');
+const accountSid = 'AC5fad11cf2c219106876868e2e840c84d';
+const authToken = '9279e69d22870f6764c323d874028cc3';
+const TwilioClient = require('twilio')(accountSid, authToken);
+
+var nodemailer = require('nodemailer');
+var sgTransport = require('nodemailer-sendgrid-transport');
+
+var options = {
+    // service: 'SendGrid',
+    auth: {
+        // api_user: 'apikey',
+        api_key: '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'
+    }
+}
+
+var EmailClient = nodemailer.createTransport(sgTransport(options));
 // const Bluebird = require('bluebird');
 //hello
 // hai
@@ -64,8 +80,8 @@ const ChildSchema = new mongoose.Schema({
 const Child = mongoose.model('Child', ChildSchema);
 
 const Missing = mongoose.model('Missing',
-    new Schema({ }),
-    'missing');  
+    new Schema({}),
+    'missing');
 
 app.get('/', function (req, res) {
     const userID = req.cookies.userID;
@@ -181,8 +197,42 @@ app.post("/find", function (req, res) {
                 .then(res => res.json())
                 .then(results => {
                     console.log(results);
-                    if (results.output) {
+                    if (results.output.length) {
+                        
+                        const guardianEmail = "thomasterance2020@cs.ajce.in";
+                        const guardianPhone = "+919495269639";
+
+                        const email = {
+                            from: 'thomasterance98@gmail.com',
+                            to: guardianEmail,
+                            subject: 'Your child was found',
+                            text: 'Your child <name> was found at <destination> on date and time.',
+                        };
+
+                        EmailClient.sendMail(email, function (err, info) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                console.log('Email sent!');
+                            }
+                        });
+                        //Send sms here
+                        // Download the helper library from https://www.twilio.com/docs/node/install
+                        // Your Account Sid and Auth Token from twilio.com/console
+                        // DANGER! This is insecure. See http://twil.io/secure
+
+                        TwilioClient.messages
+                            .create({
+                                body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+                                from: '+16123954705',
+                                to: guardianPhone
+                            })
+                            .then(message => console.log('Message sent ',message.sid))
+                            .catch(err => console.log(err));
+
                         res.render("after_find", results);
+
                     } else {
                         throw Error;
                     }
@@ -286,19 +336,21 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-app.get("/signout",  (req, res) => res.clearCookie('userID').redirect("/"))
+app.get("/signout", (req, res) => res.clearCookie('userID').redirect("/"))
 
-app.get('/get-details/:personId', async (req,res) => {
+app.get('/get-details/:personId', async (req, res) => {
     const personId = req.params.personId;
     console.log(personId);
-    try{
-        const childDetails = await Missing.findOne({ azure_face_id: personId});
+    try {
+        const childDetails = await Missing.findOne({ azure_face_id: personId });
         console.log(childDetails);
 
-    } catch(err){
+    } catch (err) {
         console.log(err);
         res.redirect("/");
     }
 });
+
+app.get('/details', (req,res) => res.render('details'))
 
 app.listen(4000, () => console.log(`Example app listening on port 4000!`));
