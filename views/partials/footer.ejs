@@ -1,14 +1,11 @@
 <div class="push"></div>
 </div>
-<footer class="page-footer">
+<footer class="page-footer" style="background-color: #712325;">
     <div class="container">
-        <div class="row">
-            <div class="col l6 s12">
-                <h5 class="white-text">Footer Content</h5>
-                <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.
+                <h5 style="text-align: center;" class="white-text">Contact us</h5>
+                <p style="text-align: center;margin-bottom: 30px;" class="grey-text text-lighten-4">Feel free to reach us at bambino@solutions.com for any queries.
                 </p>
-            </div>
-            <div class="col l4 offset-l2 s12">
+            <!-- <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>
                 <ul>
                     <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
@@ -17,13 +14,9 @@
                     <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
                 </ul>
             </div>
-        </div>
+        </div> -->
     </div>
-    <div class="footer-copyright">
-        <div class="container">
-            © 2014 Copyright Text
-            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
-        </div>
+           <p style="text-align: center;padding-bottom: 50px;">© 2020 Copyright Bambino</p> 
     </div>
 </footer>
 
@@ -45,7 +38,6 @@ const loggedInContent = `<li><a href="/">Home</a></li>
                 <li><a href="/signout">Sign out</a></li>`
 
 function showPosition(position) {
-    alert('hey')
     lat.value = position.coords.latitude;
     long.value = position.coords.longitude;
 }

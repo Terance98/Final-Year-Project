@@ -1,0 +1,31 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/geolocator/2.1.5/geolocator.js"></script>
+<script type="text/javascript">
+ 
+    geolocator.config({
+        language: "en",
+        google: {
+            version: "3",
+            key: "AIzaSyCMyfnul56GSzziPQLyI2noVuZY1gG2Tkw"
+        }
+    });
+ 
+    window.onload = function () {
+        var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumWait: 10000,     // max wait time for desired accuracy
+            maximumAge: 0,          // disable cache
+            desiredAccuracy: 30,    // meters
+            fallbackToIP: true,     // fallback to IP if Geolocation fails or rejected
+            addressLookup: true,    // requires Google API key if true
+            timezone: true,         // requires Google API key if true
+            map: "map-canvas",      // interactive map element id (or options object)
+            staticMap: true         // get a static map image URL (boolean or options object)
+        };
+        geolocator.locate(options, function (err, location) {
+            if (err) return console.log(err);
+            console.log(location);
+        });
+    };
+ 
+</script

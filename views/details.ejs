@@ -1,42 +1,53 @@
 <%- include('partials/header') -%>
-<div>
-        <img class="front-image" src="https://d1nhio0ox7pgb.cloudfront.net/_img/v_collection_png/512x512/shadow/user_edit.png" width="200" height="200">
-    </div>
- <table style="width:100%">
+<div style="width: 20%;height:20%;margin:50px auto;">
+  <img  class="front-image" src=../<%=childDetails.fname%>1.jpg>
+</div>
+<table style="width:70%;min-width:500px; margin: 0 auto;">
   <tr>
-    <th>DETAILS</th> 
+    <th>DETAILS</th>
+    <th></th>
   </tr>
   <tr>
     <td>Name :</td>
+    <td style="float: right;"><%=childDetails.name%></td>
   </tr>
   <tr>
     <td>Age :</td>
+    <td style="float: right;"><%=childDetails.age%></td>
   </tr>
   <tr>
-    <td>Gende :</td>
+    <td>Gender :</td>
+    <td style="float: right;"><%=childDetails.gender%></td>
   </tr>
   <tr>
     <td>Complexion :</td>
+    <td style="float: right;"><%=childDetails.complexion%></td>
   </tr>
   <tr>
     <td>Height :</td>
+    <td style="float: right;"><%=childDetails.height%></td>
   </tr>
   <tr>
     <td>Spot of missing :</td>
+    <td style="float: right;"><%=childDetails.missing_spot%></td>
   </tr>
   <tr>
     <td>Guardian's Name :</td>
+    <td style="float: right;"><%=childDetails.guardian_name%></td>
   </tr>
   <tr>
     <td>Telephone :</td>
+    <td style="float: right;"><%=childDetails.phone%></td>
   </tr>
   <tr>
     <td>Email :</td>
+    <td style="float: right;"><%=childDetails.email%></td>
   </tr>
   <tr>
     <td>Address :</td>
+    <td style="float: right;"><%=childDetails.address%></td>
   </tr>
- 
-</table> 
+
+</table>
 
 <%- include('partials/footer') -%>
